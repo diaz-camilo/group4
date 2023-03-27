@@ -1,0 +1,85 @@
+@model IEnumerable<Book>
+
+@{
+    const string title = "All Books";
+    string? searchInputValue = Context.Request.Query["titleSearch"];
+    string? availabilityFilter = Context.Request.Query["availabilityFilter"];
+    ViewData["Title"] = title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@title</h1>
+<form asp-action="Index" method="get">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="titleSearch" class="visually-hidden">search by book title name</label>
+            <input type="text" class="form-control" placeholder="book title" value="@searchInputValue" name="titleSearch" id="titleSearch"/>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">search</button>
+        </div>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="availabilityFilter" id="inlineRadio1" value=""
+               @if (string.IsNullOrEmpty(availabilityFilter))
+               {
+                   @Html.Encode(" checked")
+               }/>
+        <label class="form-check-label" for="inlineRadio1">All</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="availabilityFilter" id="inlineRadio2" value="available"
+               @if (availabilityFilter == "available")
+               {
+                   @Html.Encode(" checked")
+               }/>
+        <label class="form-check-label" for="inlineRadio2">Available</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="availabilityFilter" id="inlineRadio3" value="reserved"
+               @if (availabilityFilter == "reserved")
+               {
+                   @Html.Encode(" checked")
+               }/>
+        <label class="form-check-label" for="inlineRadio3">Reserved</label>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsAvailable)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @if (item.IsAvailable)
+                {
+                    @Html.Encode("Available")
+                }
+                else
+                {
+                    @Html.Encode("Reserved")
+                }
+            </td>
+            <td>
+                @if (item.IsAvailable)
+                {
+                    <a asp-action="Reserve" asp-route-id="@item.Id">Reserve</a>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

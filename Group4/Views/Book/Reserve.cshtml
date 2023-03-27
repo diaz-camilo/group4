@@ -1,0 +1,43 @@
+@model Group4.ViewModels.ReservationViewModel
+
+@{
+    const string title = "Reservation";
+    ViewData["Title"] = title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var buttonState = Model.Book.IsAvailable ? "" : "disabled";
+    var bookLoanState = Model.Book.IsAvailable ? "Available" : "On Loan";
+}
+
+<h1>@title</h1>
+@if (Model.Reservation != null)
+{
+    <p class="alert alert-success">Book was successfully reserved. your reservation number is: <b>@Html.DisplayFor(model => model.Reservation.Id)</b></p>
+}
+
+<div>
+    <h4>Book - @Html.DisplayFor(model => model.Book.Name)</h4>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.IsAvailable)
+        </dt>
+        <dd class="col-sm-10">
+            @bookLoanState
+        </dd>
+    </dl>
+</div>
+<div>
+    <form asp-action="ConfirmReserve">
+        <input type="hidden" asp-for="Book.Id" name="Id"/>
+        <div class="form-group">
+            <input type="submit" value="Reserve" class="btn btn-primary" @buttonState/>
+        </div>
+    </form>
+    <a asp-action="Index">Back to List</a>
+</div>
