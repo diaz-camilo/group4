@@ -61,6 +61,6 @@ public class BookController : Controller
     {
         var result = await _reservationRepository.CancelReservation(User.Identity?.Name!, id);
 
-        return RedirectToAction("Index", "Book", new {isCancelReservationSuccessful = result, reservationNumber = id});
+        return RedirectToAction("Index", "User", new {isCancelReservationSuccessful = result, reservationNumber = id});
     }
 }

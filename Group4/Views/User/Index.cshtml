@@ -1,0 +1,68 @@
+@model IEnumerable<Book>
+
+@{
+    const string title = "My Reservations";
+    ViewData["Title"] = title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string? isSuccess = Context.Request.Query["isCancelReservationSuccessful"];
+    string? reservationNumber = Context.Request.Query["reservationNumber"];
+    string? searchInputValue = Context.Request.Query["titleSearch"];
+}
+
+<h1>@title</h1>
+@switch (isSuccess)
+{
+    case "True":
+        <div class="alert alert-dismissible alert-success fade show" role="alert">
+            Reservation number <b>@reservationNumber</b> was cancelled
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        break;
+    case "False":
+        <div class="alert alert-dismissible alert-danger fade show" role="alert">
+            Reservation number <b>@reservationNumber</b> couldn't be cancelled
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        break;
+}
+<form asp-action="Index" method="get" class="row g-3">
+    <div class="col-md-6">
+        <label for="titleSearch" class="visually-hidden">search by book title name</label>
+        <input type="text" class="form-control" placeholder="book title" name="titleSearch" id="titleSearch" value="@searchInputValue"/>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">search</button>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Reservation!.Id)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        if(item.Reservation is not null)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reservation.Id)
+                </td>
+                <td>
+                    <a asp-controller="Book" asp-action="CancelReservation" asp-route-id="@item.Reservation.Id">Cancel Reservation</a>
+                </td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
